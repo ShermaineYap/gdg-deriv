@@ -1,0 +1,99 @@
+{
+ "English|obvious": {
+  "verdict": "High risk",
+  "verdict_localized": "High Risk Scam Detected",
+  "detected_language": "English",
+  "summary": "This message shows multiple clear indicators of a scam attempt, including artificial urgency, a suspicious unverified link, requests for your password and OTP, and an invitation to chat on Telegram. Do not click the link or share any information.",
+  "transcribed_text": "",
+  "display_message": "[URGENT] Official Trading Security Desk: Unusual withdrawal activity was detected on your trading account! Your wallet will be permanently frozen within 15 minutes unless you verify immediately at http://secure-trade-verify.top/auth and reply here with your login password and 6-digit SMS OTP code. For priority unlock, message our senior officer on Telegram @TradeDesk_VerifyNow.",
+  "flags": [
+   {
+    "exact_phrase": "Your wallet will be permanently frozen within 15 minutes",
+    "category": "urgency/threat",
+    "plain_reason": "Scammers create fake countdowns and strict deadlines to panic you into taking hasty actions before you can verify the claim."
+   },
+   {
+    "exact_phrase": "http://secure-trade-verify.top/auth",
+    "category": "suspicious link",
+    "plain_reason": "This link uses a non-official domain (.top) designed to mimic legitimate trading platforms and steal your credentials."
+   },
+   {
+    "exact_phrase": "reply here with your login password and 6-digit SMS OTP code",
+    "category": "asks for password/OTP/card details",
+    "plain_reason": "Legitimate platforms will never ask you to send your account password or SMS OTP codes over chat or text."
+   },
+   {
+    "exact_phrase": "message our senior officer on Telegram @TradeDesk_VerifyNow",
+    "category": "asks to move to another app",
+    "plain_reason": "Official support agents will not ask you to migrate conversations to third-party messaging apps like Telegram."
+   }
+  ],
+  "what_real_support_never_does": [
+   "Never asks for your password, PIN, TAC, or SMS OTP codes.",
+   "Never threatens to permanently freeze your account within minutes over text or chat.",
+   "Never redirects support conversations to external personal channels like Telegram or WhatsApp."
+  ],
+  "safe_steps": [
+   "Do not tap any links or reply to the message.",
+   "Open the official trading app or type the official website address yourself.",
+   "Contact support directly from inside the official app or website.",
+   "Never share your passwords, OTPs, PINs, or sensitive account details with anyone."
+  ]
+ },
+ "English|subtle": {
+  "verdict": "High risk",
+  "verdict_localized": "High Risk",
+  "detected_language": "English",
+  "summary": "This message is posing as compliance support and requesting remote access to your device, which is a major security risk. Real platform staff will never ask you to install remote desktop tools or message them privately on WhatsApp.",
+  "transcribed_text": "",
+  "display_message": "Hi Daniel, this is Marcus from the Account Compliance team following up on your recent P2P order #88412. To prevent a temporary compliance hold on your withdrawals, could you hop on a quick WhatsApp message at +60 11-3948 2201 or share your screen via AnyDesk so we can re-sync your trading session? No password needed.",
+  "flags": [
+   {
+    "exact_phrase": "To prevent a temporary compliance hold on your withdrawals",
+    "category": "urgency/threat",
+    "plain_reason": "Scammers create artificial pressure by threatening to freeze or restrict your withdrawals so you act without thinking."
+   },
+   {
+    "exact_phrase": "hop on a quick WhatsApp message at +60 11-3948 2201",
+    "category": "asks to move to another app",
+    "plain_reason": "Official support communicates directly within the platform's app or website, not via personal WhatsApp accounts."
+   },
+   {
+    "exact_phrase": "share your screen via AnyDesk so we can re-sync your trading session",
+    "category": "asks for remote access or payment",
+    "plain_reason": "AnyDesk allows someone to control your computer or phone remotely to steal funds and credentials, even if they claim 'no password needed'."
+   }
+  ],
+  "what_real_support_never_does": [
+   "Never asks you to download remote access software like AnyDesk or TeamViewer.",
+   "Never requests you to move an official support inquiry to a personal WhatsApp or Telegram chat.",
+   "Never threatens to freeze your account unless you communicate with an unverified external contact."
+  ],
+  "safe_steps": [
+   "Do not tap any links, call the number, or reply to this message.",
+   "Open the official trading app or manually type the platform's official website address yourself.",
+   "Contact support directly from inside the official app or website to check on order #88412.",
+   "Never share passwords, OTPs, SMS codes, or grant screen-sharing permissions to anyone."
+  ]
+ },
+ "English|genuine": {
+  "verdict": "No warning signs found – still verify",
+  "verdict_localized": "No warning signs found – still verify",
+  "detected_language": "English",
+  "summary": "This message appears to be a standard ticket update directing you to check inside the official app. However, always verify any account notification through official channels directly.",
+  "transcribed_text": "",
+  "display_message": "Hello, thank you for contacting Customer Support earlier regarding Ticket #492018 (annual tax statement export). Your statement is now ready. You can view and download it anytime by opening the official app and going to Profile > Statements. Please do not reply to this message with passwords or personal details.",
+  "flags": [],
+  "what_real_support_never_does": [
+   "Never asks you for your account password, OTP, or PIN under any circumstances.",
+   "Never asks you to transfer funds to external private personal accounts to clear tax or verification issues.",
+   "Never insists that you continue support conversations on unofficial apps like WhatsApp or Telegram."
+  ],
+  "safe_steps": [
+   "Do not tap any unexpected links or reply to the message directly.",
+   "Open the official app or type the official website address yourself in your web browser.",
+   "Contact support directly from inside the official app or website to confirm this update.",
+   "Never share passwords, OTPs, PINs, or recovery phrases with anyone."
+  ]
+ }
+}

@@ -120,6 +120,17 @@
   }
   const sampleVerdicts = {}; // key: `${lang}|${sampleKey}` -> verdict (in memory only)
 
+  // Demo mode: saved results from real Gemini checks of the sample inbox messages,
+  // so the demo stays instant even when the Gemini API is overloaded.
+  let demoResults = {};
+  fetch('./demo-results.json', { cache: 'no-store' })
+    .then((r) => (r.ok ? r.json() : {}))
+    .then((data) => {
+      demoResults = data && typeof data === 'object' ? data : {};
+    })
+    .catch(() => {});
+  const demoNote = document.getElementById('demoNote');
+
   // In-memory state only (nothing pasted is stored)
   let serverAvailable = false;
   let serverHasKey = false;
@@ -441,23 +452,35 @@
 
   // Calling Gemini (via server proxy or direct browser fallback)
   async function analyzeViaDirectGemini(apiKey, text, imageObj) {
-    const payload = Shared.buildGeminiPayload({
-      text,
-      imageBase64: imageObj ? imageObj.base64 : null,
-      imageMimeType: imageObj ? imageObj.mimeType : null,
-      qrText: imageObj && imageObj.qrText ? imageObj.qrText : '',
-      model: configuredModel
-    });
-
-    const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(configuredModel)}:generateContent`;
-    const res = await fetch(endpoint, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-goog-api-key': apiKey
-      },
-      body: JSON.stringify(payload)
-    });
+    const FALLBACK_MODEL = 'gemini-3.5-flash';
+    const models = configuredModel === FALLBACK_MODEL ? [configuredModel] : [configuredModel, FALLBACK_MODEL];
+    let res = null;
+    for (const model of models) {
+      const payload = Shared.buildGeminiPayload({
+        text,
+        imageBase64: imageObj ? imageObj.base64 : null,
+        imageMimeType: imageObj ? imageObj.mimeType : null,
+        qrText: imageObj && imageObj.qrText ? imageObj.qrText : '',
+        model
+      });
+      const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`;
+      res = await fetch(endpoint, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-goog-api-key': apiKey
+        },
+        body: JSON.stringify(payload),
+        signal: AbortSignal.timeout ? AbortSignal.timeout(75000) : undefined
+      }).catch((e) => {
+        if (e && (e.name === 'TimeoutError' || e.name === 'AbortError')) return null;
+        throw e;
+      });
+      if (res && (res.ok || ![429, 500, 503].includes(res.status))) break;
+    }
+    if (!res) {
+      throw new Error('Gemini is very busy right now and did not answer in time. Please try again in a minute, or tap a sample message for an instant demo result.');
+    }
 
     const data = await res.json().catch(() => null);
     if (!res.ok) {
@@ -746,7 +769,10 @@
 
     setLoading(true);
     try {
-      const result = await runCheck(text, uploadedImage);
+      const demoKey = sampleKeyAtSubmit ? `${langAtSubmit}|${sampleKeyAtSubmit}` : null;
+      const saved = demoKey && demoResults[demoKey];
+      const result = saved ? JSON.parse(JSON.stringify(saved)) : await runCheck(text, uploadedImage);
+      demoNote.hidden = !saved;
       result.qrText = uploadedImage && uploadedImage.qrText ? uploadedImage.qrText : '';
       renderResults(result);
       if (sampleKeyAtSubmit) {

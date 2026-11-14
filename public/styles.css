@@ -1088,3 +1088,10 @@ button:focus-visible,
   font-size: 0.8rem;
   color: #92400e;
 }
+
+.demo-note {
+  margin: 10px 0 0;
+  font-size: 0.82rem;
+  font-weight: 600;
+  opacity: 0.9;
+}

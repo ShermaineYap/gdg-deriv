@@ -11,6 +11,8 @@ const {
   normalizeAnalysisResult
 } = require('./public/shared.js');
 
+const GEMINI_TIMEOUT_MS = Number(process.env.GEMINI_TIMEOUT_MS) || 75000;
+
 function loadDotEnv(envFilePath) {
   try {
     if (!fs.existsSync(envFilePath)) return;
@@ -154,25 +156,54 @@ function createRequestHandler(options = {}) {
           qrText
         });
 
-        const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`;
-
-        let geminiRes;
-        try {
-          geminiRes = await fetchImpl(endpoint, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'x-goog-api-key': apiKey
-            },
-            body: JSON.stringify(geminiPayload)
-          });
-        } catch (netErr) {
-          return sendJson(res, 502, {
-            error: mapGeminiErrorToFriendlyMessage(0, netErr)
-          });
+        // Try the main model first; if Gemini is overloaded (429/503/timeout), fall back once.
+        const fallbackModel = resolveGeminiModel(env.GEMINI_FALLBACK_MODEL || 'gemini-3.5-flash');
+        const modelsToTry = fallbackModel && fallbackModel !== model ? [model, fallbackModel] : [model];
+        let geminiRes = null;
+        let geminiData = null;
+        let timedOut = false;
+        for (const tryModel of modelsToTry) {
+          const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(tryModel)}:generateContent`;
+          const abort = new AbortController();
+          const timer = setTimeout(() => abort.abort(), GEMINI_TIMEOUT_MS);
+          timedOut = false;
+          try {
+            geminiRes = await fetchImpl(endpoint, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'x-goog-api-key': apiKey
+              },
+              body: JSON.stringify(tryModel === model ? geminiPayload : buildGeminiPayload({
+                text,
+                imageBase64: imageBase64 || null,
+                imageMimeType: imageMimeType || null,
+                model: tryModel,
+                qrText
+              })),
+              signal: abort.signal
+            });
+            geminiData = await geminiRes.json().catch(() => null);
+          } catch (netErr) {
+            clearTimeout(timer);
+            if (abort.signal.aborted) {
+              timedOut = true;
+              continue;
+            }
+            return sendJson(res, 502, {
+              error: mapGeminiErrorToFriendlyMessage(0, netErr)
+            });
+          }
+          clearTimeout(timer);
+          if (geminiRes.ok || ![429, 500, 503].includes(geminiRes.status)) break;
+          console.error(`Gemini ${tryModel} busy (HTTP ${geminiRes.status}); trying fallback if available`);
         }
 
-        const geminiData = await geminiRes.json().catch(() => null);
+        if (timedOut || !geminiRes) {
+          return sendJson(res, 504, {
+            error: 'Gemini is very busy right now and did not answer in time. Please try again in a minute, or tap a sample message for an instant demo result.'
+          });
+        }
 
         if (!geminiRes.ok) {
           return sendJson(
