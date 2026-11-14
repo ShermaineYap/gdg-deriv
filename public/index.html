@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Semak Dulu – Check Before You Act</title>
+  <meta
+    name="description"
+    content="Check messages claiming to be from online trading support for scam warning signs before you click or reply."
+  />
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <div class="page-shell">
+    <header class="site-header">
+      <div class="brand-badge" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+          <path d="M9 12l2 2 4-4"></path>
+        </svg>
+      </div>
+      <div class="header-copy">
+        <h1>Semak Dulu <span class="header-divider">–</span> <span class="header-sub">Check Before You Act</span></h1>
+        <p class="lead">
+          Got a message claiming to be from your online trading platform’s support team?
+          Paste the text or upload a screenshot to check for scam warning signs first.
+        </p>
+      </div>
+    </header>
+
+    <main id="mainContent">
+      <!-- Shown only when no server-side GEMINI_API_KEY is configured -->
+      <section id="apiKeySection" class="card api-key-card" hidden aria-label="Gemini API configuration">
+        <div class="api-key-header">
+          <div>
+            <label for="apiKeyInput" class="api-key-label">Gemini API Key</label>
+            <p class="api-key-help">
+              Used only in memory for this session to run Gemini structured analysis. Never saved or logged.
+            </p>
+          </div>
+          <a
+            href="https://aistudio.google.com/apikey"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="text-link"
+          >Get a free key</a>
+        </div>
+        <div class="api-key-row">
+          <input
+            id="apiKeyInput"
+            type="password"
+            autocomplete="off"
+            spellcheck="false"
+            placeholder="Paste your Gemini API key (AIza...)"
+            class="api-key-input"
+          />
+          <button type="button" id="toggleKeyBtn" class="btn-secondary btn-small" aria-pressed="false">
+            Show
+          </button>
+        </div>
+      </section>
+
+      <!-- Input Card -->
+      <section class="card input-card" aria-labelledby="inputSectionTitle">
+        <h2 id="inputSectionTitle" class="visually-hidden">Enter message to check</h2>
+
+        <!-- Sample message controls -->
+        <div class="samples-bar">
+          <div class="samples-top-row">
+            <span class="samples-label">Sample inbox – tap a message to load it:</span>
+            <div class="sample-lang-group" role="group" aria-label="Sample message language">
+              <button type="button" class="lang-pill is-active" data-lang="English">EN</button>
+              <button type="button" class="lang-pill" data-lang="Bahasa Malaysia">BM</button>
+              <button type="button" class="lang-pill" data-lang="Chinese">中文</button>
+              <button type="button" class="lang-pill" data-lang="Manglish">Manglish</button>
+            </div>
+          </div>
+          <ul class="mock-inbox" role="list" aria-label="Sample messages">
+            <li>
+              <button type="button" class="sample-btn inbox-row" data-sample="obvious">
+                <span class="inbox-avatar" aria-hidden="true">TS</span>
+                <span class="inbox-text">
+                  <span class="inbox-name">Trading Security Desk <em class="inbox-tag">Obvious scam</em></span>
+                  <span class="inbox-preview"></span>
+                </span>
+                <span class="traffic-dot dot--unchecked" data-dot-for="obvious" title="Not checked yet"></span>
+              </button>
+            </li>
+            <li>
+              <button type="button" class="sample-btn inbox-row" data-sample="subtle">
+                <span class="inbox-avatar" aria-hidden="true">AM</span>
+                <span class="inbox-text">
+                  <span class="inbox-name">Account Manager <em class="inbox-tag">Subtle scam</em></span>
+                  <span class="inbox-preview"></span>
+                </span>
+                <span class="traffic-dot dot--unchecked" data-dot-for="subtle" title="Not checked yet"></span>
+              </button>
+            </li>
+            <li>
+              <button type="button" class="sample-btn inbox-row" data-sample="genuine">
+                <span class="inbox-avatar" aria-hidden="true">CS</span>
+                <span class="inbox-text">
+                  <span class="inbox-name">Customer Support <em class="inbox-tag">Genuine-looking</em></span>
+                  <span class="inbox-preview"></span>
+                </span>
+                <span class="traffic-dot dot--unchecked" data-dot-for="genuine" title="Not checked yet"></span>
+              </button>
+            </li>
+          </ul>
+        </div>
+
+        <form id="checkForm" novalidate>
+          <div class="field-group">
+            <div class="field-header">
+              <label for="messageInput" class="field-label">Paste the message</label>
+              <button type="button" id="clearTextBtn" class="link-btn" hidden>Clear text</button>
+            </div>
+            <textarea
+              id="messageInput"
+              rows="5"
+              placeholder="Paste the SMS, WhatsApp, Telegram, email, or chat message here…"
+            ></textarea>
+          </div>
+
+          <div class="divider-or" aria-hidden="true">
+            <span>or upload a screenshot</span>
+          </div>
+
+          <div class="field-group">
+            <input
+              id="screenshotInput"
+              type="file"
+              accept="image/png,image/jpeg,image/webp,image/gif"
+              class="visually-hidden"
+            />
+            <label for="screenshotInput" id="dropZone" class="upload-zone">
+              <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect x="3" y="3" width="18" height="18" rx="3" ry="3"></rect>
+                <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                <polyline points="21 15 16 10 5 21"></polyline>
+              </svg>
+              <span class="upload-title">Upload or drop a screenshot</span>
+              <span class="upload-hint">PNG, JPG, or WebP · You can also paste an image</span>
+            </label>
+
+            <input
+              id="cameraInput"
+              type="file"
+              accept="image/*"
+              capture="environment"
+              class="visually-hidden"
+            />
+            <label for="cameraInput" id="cameraBtn" class="camera-btn">
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                <circle cx="12" cy="13" r="4"></circle>
+              </svg>
+              Scan with camera
+            </label>
+
+            <div id="imagePreviewCard" class="image-preview-card" hidden>
+              <img id="imagePreviewImg" alt="Uploaded message screenshot preview" />
+              <div class="image-preview-meta">
+                <span id="imagePreviewName" class="image-name"></span>
+                <p id="qrPreviewNote" class="qr-note" hidden></p>
+                <button type="button" id="removeImageBtn" class="link-btn danger-link">
+                  Remove screenshot
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div id="errorAlert" class="error-alert" role="alert" hidden></div>
+
+          <button type="submit" id="checkBtn" class="btn-primary">
+            <span id="checkBtnText">Check message</span>
+          </button>
+        </form>
+      </section>
+
+      <!-- Results Area -->
+      <section id="resultsSection" class="results-stack" hidden aria-live="polite">
+        <!-- 1. Large Coloured Verdict Banner -->
+        <div id="verdictBanner" class="verdict-banner" role="region" aria-labelledby="verdictTitle">
+          <div class="verdict-top">
+            <span id="verdictIcon" class="verdict-icon" aria-hidden="true"></span>
+            <div class="verdict-heading-wrap">
+              <div class="verdict-meta-row">
+                <span id="verdictCanonicalBadge" class="verdict-canonical-pill" hidden></span>
+                <span id="detectedLangBadge" class="lang-detected-pill"></span>
+              </div>
+              <h2 id="verdictTitle" class="verdict-title"></h2>
+            </div>
+          </div>
+          <p id="verdictSummary" class="verdict-summary"></p>
+        </div>
+
+        <!-- 2. Original Message with Interactive Highlighted Phrases -->
+        <article class="card message-review-card" aria-labelledby="messageReviewHeading">
+          <div class="section-header">
+            <h3 id="messageReviewHeading">Message checked</h3>
+            <p id="tapHighlightHint" class="section-hint">
+              Tap any highlighted phrase to see why it was flagged.
+            </p>
+          </div>
+
+          <div class="chat-thread">
+            <div class="chat-row">
+              <div class="chat-bubble">
+                <div class="chat-sender">Message claiming to be support</div>
+                <div id="highlightedMessageBox" class="highlighted-message-box"></div>
+                <div class="chat-meta">Checked just now</div>
+              </div>
+              <button
+                type="button"
+                id="resultDot"
+                class="traffic-dot traffic-dot--lg"
+                aria-expanded="true"
+                aria-controls="resultDetails"
+                title="Tap to show or hide the warning signs and safe steps"
+              ></button>
+            </div>
+            <p class="chat-dot-hint">Tap the dot to show or hide the warning signs and safe steps.</p>
+          </div>
+
+          <div id="resultDetails">
+
+          <!-- Reason Drawer shown when a highlighted phrase is tapped -->
+          <div id="flagReasonPanel" class="flag-reason-panel" hidden role="region" aria-live="polite">
+            <div class="flag-reason-top">
+              <span id="flagCategoryBadge" class="category-badge"></span>
+              <button type="button" id="closeReasonBtn" class="close-reason-btn" aria-label="Close explanation">
+                Close
+              </button>
+            </div>
+            <blockquote id="flagExactQuote" class="flag-quote"></blockquote>
+            <p id="flagPlainReason" class="flag-reason-text"></p>
+          </div>
+
+          <!-- Unmatched / visual screenshot flags (if any) -->
+          <div id="unmatchedFlagsWrap" class="unmatched-flags-wrap" hidden>
+            <h4 id="unmatchedFlagsHeading" class="unmatched-heading">Additional warning signs spotted</h4>
+            <div id="unmatchedFlagsList" class="unmatched-chips"></div>
+          </div>
+
+          <div id="qrResultBox" class="qr-result-box" hidden>
+            <h4 class="unmatched-heading">QR code in screenshot points to</h4>
+            <code id="qrResultText" class="qr-url"></code>
+            <p class="qr-result-hint">Shown as plain text only. Do not scan or open it.</p>
+          </div>
+          </div>
+        </article>
+
+        <!-- 3. What Real Support Never Does -->
+        <article class="card info-card result-extra" aria-labelledby="realSupportHeading">
+          <h3 id="realSupportHeading">What real support never does</h3>
+          <ul id="realSupportList" class="never-does-list"></ul>
+        </article>
+
+        <!-- 4. How to Check Safely (Numbered List) -->
+        <article class="card safe-steps-card result-extra" aria-labelledby="safeStepsHeading">
+          <h3 id="safeStepsHeading">How to check safely</h3>
+          <ol id="safeStepsList" class="safe-steps-list"></ol>
+        </article>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <p>This tool gives guidance, not a guarantee. Nothing you paste is stored.</p>
+    </footer>
+  </div>
+
+  <script src="./vendor/jsQR.js"></script>
+  <script src="./shared.js"></script>
+  <script src="./app.js"></script>
+</body>
+</html>

@@ -1,0 +1,13 @@
+{
+  "name": "semak-dulu",
+  "version": "1.0.0",
+  "description": "Semak Dulu – Check Before You Act: Scam message checker for online trading customers powered by the Gemini API.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "node test.js"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
