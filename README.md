@@ -45,7 +45,6 @@ A single-page web app that helps online trading platform customers check message
 - **QR code check**: QR codes in screenshots are decoded in the browser with [jsQR](https://github.com/cozmo/jsQR) (Apache-2.0). The destination is shown as plain text, never opened, and included in the analysis.
 - **Scan with camera**: On phones, photograph another screen or a printed letter directly.
 
-- **Instant demo mode**: The three English sample inbox messages show saved results from real Gemini checks (`public/demo-results.json`), so the demo stays fast even when the Gemini API is overloaded. Anything you paste yourself is checked live.
 - **Busy-API handling**: Each Gemini call times out after 75 s, and if the main model (`gemini-3.8-flash`) is overloaded (429/503/timeout) the app retries once with `gemini-3.5-flash`.
 
 ## Disclaimer

@@ -201,7 +201,7 @@ function createRequestHandler(options = {}) {
 
         if (timedOut || !geminiRes) {
           return sendJson(res, 504, {
-            error: 'Gemini is very busy right now and did not answer in time. Please try again in a minute, or tap a sample message for an instant demo result.'
+            error: 'Gemini is very busy right now and did not answer in time. Please try again in a minute.'
           });
         }
 

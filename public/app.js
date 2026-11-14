@@ -120,16 +120,6 @@
   }
   const sampleVerdicts = {}; // key: `${lang}|${sampleKey}` -> verdict (in memory only)
 
-  // Demo mode: saved results from real Gemini checks of the sample inbox messages,
-  // so the demo stays instant even when the Gemini API is overloaded.
-  let demoResults = {};
-  fetch('./demo-results.json', { cache: 'no-store' })
-    .then((r) => (r.ok ? r.json() : {}))
-    .then((data) => {
-      demoResults = data && typeof data === 'object' ? data : {};
-    })
-    .catch(() => {});
-  const demoNote = document.getElementById('demoNote');
 
   // In-memory state only (nothing pasted is stored)
   let serverAvailable = false;
@@ -479,7 +469,7 @@
       if (res && (res.ok || ![429, 500, 503].includes(res.status))) break;
     }
     if (!res) {
-      throw new Error('Gemini is very busy right now and did not answer in time. Please try again in a minute, or tap a sample message for an instant demo result.');
+      throw new Error('Gemini is very busy right now and did not answer in time. Please try again in a minute.');
     }
 
     const data = await res.json().catch(() => null);
@@ -769,10 +759,7 @@
 
     setLoading(true);
     try {
-      const demoKey = sampleKeyAtSubmit ? `${langAtSubmit}|${sampleKeyAtSubmit}` : null;
-      const saved = demoKey && demoResults[demoKey];
-      const result = saved ? JSON.parse(JSON.stringify(saved)) : await runCheck(text, uploadedImage);
-      demoNote.hidden = !saved;
+      const result = await runCheck(text, uploadedImage);
       result.qrText = uploadedImage && uploadedImage.qrText ? uploadedImage.qrText : '';
       renderResults(result);
       if (sampleKeyAtSubmit) {
